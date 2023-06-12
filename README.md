@@ -32,5 +32,4 @@ The OpenAI API is powered by a diverse set of [models](https://platform.openai.c
 
 # Dependencies
 pip install -r requirements.txt
-```
 
