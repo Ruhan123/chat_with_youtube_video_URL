@@ -1,4 +1,3 @@
-## Ruhan Siddiqui
 
 This project showcases how to create a searchable database from a YouTube video transcript, perform similarity search queries using the FAISS library, and respond to user questions with relevant and precise information.
 
@@ -35,3 +34,4 @@ The OpenAI API is powered by a diverse set of [models](https://platform.openai.c
 # Dependencies
 pip install -r requirements.txt
 
+Developed by Ruhan Siddiqui
