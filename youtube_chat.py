@@ -1,3 +1,4 @@
+# import necessaries libraries
 from langchain.document_loaders import YoutubeLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -12,10 +13,11 @@ from langchain.prompts.chat import (
 )
 import textwrap
 
+# load environment for Openai api key
 load_dotenv(find_dotenv())
 embeddings = OpenAIEmbeddings()
 
-
+# load youtube url and store vectorstore using FAISS
 def create_db_from_youtube_video_url(video_url):
     loader = YoutubeLoader.from_youtube_url(video_url)
     transcript = loader.load()
@@ -26,7 +28,7 @@ def create_db_from_youtube_video_url(video_url):
     db = FAISS.from_documents(docs, embeddings)
     return db
 
-
+# retrieve response from db vectorstore based on similarity score in relevant document
 def get_response_from_query(db, query, k=4):
     """
     gpt-3.5-turbo can handle up to 4097 tokens. Setting the chunksize to 1000 and k to 4 maximizes
@@ -68,12 +70,9 @@ def get_response_from_query(db, query, k=4):
 
 
 # Example usage:
-video_url = "https://www.youtube.com/watch?v=L_Guz73e6fw"
+video_url = "https://www.youtube.com/watch?v=nE2skSRWTTs"
 db = create_db_from_youtube_video_url(video_url)
 
-#query = "What are they saying about microsoft?"
-# response, docs = get_response_from_query(db, query)
-# print(textwrap.fill(response, width=50))
 
 while True:
   query=input("You: ")
