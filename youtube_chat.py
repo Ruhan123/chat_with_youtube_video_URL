@@ -1,4 +1,5 @@
-# import necessaries libraries
+import streamlit as st
+import textwrap
 from langchain.document_loaders import YoutubeLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -11,13 +12,12 @@ from langchain.prompts.chat import (
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
-import textwrap
 
-# load environment for Openai api key
+# load environment for OpenAI API key
 load_dotenv(find_dotenv())
 embeddings = OpenAIEmbeddings()
 
-# load youtube url and store vectorstore using FAISS
+# load YouTube URL and create vector store using FAISS
 def create_db_from_youtube_video_url(video_url):
     loader = YoutubeLoader.from_youtube_url(video_url)
     transcript = loader.load()
@@ -28,13 +28,8 @@ def create_db_from_youtube_video_url(video_url):
     db = FAISS.from_documents(docs, embeddings)
     return db
 
-# retrieve response from db vectorstore based on similarity score in relevant document
+# retrieve response from db vector store based on similarity score in relevant document
 def get_response_from_query(db, query, k=4):
-    """
-    gpt-3.5-turbo can handle up to 4097 tokens. Setting the chunksize to 1000 and k to 4 maximizes
-    the number of tokens to analyze.
-    """
-
     docs = db.similarity_search(query, k=k)
     docs_page_content = " ".join([d.page_content for d in docs])
 
@@ -42,7 +37,7 @@ def get_response_from_query(db, query, k=4):
 
     # Template to use for the system message prompt
     template = """
-        You are a helpful assistant that that can answer questions about youtube videos 
+        You are a helpful assistant that can answer questions about YouTube videos 
         based on the video's transcript: {docs}
         
         Only use the factual information from the transcript to answer the question.
@@ -69,14 +64,20 @@ def get_response_from_query(db, query, k=4):
     return response, docs
 
 
-# Example usage:
-video_url = "https://www.youtube.com/watch?v=nE2skSRWTTs"
-db = create_db_from_youtube_video_url(video_url)
+# Streamlit UI
+def main():
+    st.title("YouTube Video Chatbot")
+    video_url = st.text_input("Enter YouTube URL:")
+    query = st.text_input("Ask a question:")
 
+    if st.button("Submit"):
+        if video_url and query:
+            db = create_db_from_youtube_video_url(video_url)
+            response, docs = get_response_from_query(db, query)
+            st.text("Chatbot Response:")
+            st.write(textwrap.fill(response, width=50))
+        else:
+            st.warning("Please enter both the YouTube URL and a question.")
 
-while True:
-  query=input("You: ")
-  if query == "exit":
-    break
-  response, docs = get_response_from_query(db, query)
-  print(textwrap.fill(response, width=50))
+if __name__ == "__main__":
+    main()
