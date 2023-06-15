@@ -1,3 +1,4 @@
+
 import streamlit as st
 import textwrap
 from langchain.document_loaders import YoutubeLoader
@@ -66,9 +67,9 @@ def get_response_from_query(db, query, k=4):
 
 # Streamlit UI
 def main():
-    st.title("YouTube Video Chatbot")
+    st.title("YouTube Video Chatbot by Ruhan")
     video_url = st.text_input("Enter YouTube URL:")
-    query = st.text_input("Ask a question:")
+    query = st.text_input("Ask a question based on your YouTube URL Content:")
 
     if st.button("Submit"):
         if video_url and query:
